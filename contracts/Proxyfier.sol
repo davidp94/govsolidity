@@ -10,7 +10,7 @@ contract Proxyfier {
     
 	mapping (address => uint256) public balances;
 	
-	event Transaction(uint256 _value);
+	event Transaction(address _to, uint256 _value);
 
     uint256 public percentMax = 10**5;
     // percentMax percent cut
@@ -51,13 +51,15 @@ contract Proxyfier {
     }
     
     // destinationValue in wei
-    function sendTX(uint256 destinationValue) public payable  {
+    function sendTX(address _to, bytes _data, uint256 _destinationValue) public payable {
         uint256 vat = (msg.value * cut) / percentMax;
         uint256 newvalue = msg.value - vat;
-        require(destinationValue <= newvalue);
+        require(_destinationValue <= newvalue);
         balances[recipient] += vat;
-        //TODO: external call
-        Transaction(newvalue);
+        // WARNING: it is sending ethers right now.
+        // TODO: turns this to an external function call
+        require(_to.send(newvalue));
+        Transaction(_to, newvalue);
     }
 
 }
