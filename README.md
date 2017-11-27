@@ -4,6 +4,7 @@ implementation of some ideas in solidity
 
 ## some schemas
 
+![government](docs/drawio_out_1.png)
 
 ## automatic VAT withdrawal contract
 
