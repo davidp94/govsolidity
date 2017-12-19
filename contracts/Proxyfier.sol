@@ -4,6 +4,13 @@ pragma solidity ^0.4.4;
 // VAT withdrawal
 contract Proxyfier {
     
+    struct Stat {
+        address user;
+        uint256 totalContributed;
+    }
+    
+    mapping(address => Stat) userStats;
+    
     address public admin;
     
     address public recipient;
@@ -56,6 +63,11 @@ contract Proxyfier {
         uint256 newvalue = msg.value - vat;
         require(_destinationValue <= newvalue);
         balances[recipient] += vat;
+        
+        //update stats
+        userStats[msg.sender].user = msg.sender;
+        userStats[msg.sender].totalContributed += vat;
+        
         // WARNING: it is sending ethers right now.
         // TODO: turns this to an external function call
         require(_to.send(newvalue));
